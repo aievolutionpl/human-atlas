@@ -1,64 +1,120 @@
-# Human Atlas
+# 🫀 Human Atlas 3D — Interaktywna anatomia po polsku
 
-An interactive 3D anatomy explorer built with React, Three.js, and shadcn/ui. Take the BodyParts3D adult male reference apart into **2,234 individually selectable meshes**, explore **15 anatomical systems**, and search **3,432 named concepts**.
+<div align="center">
 
-**[Explore the live demo](https://human-atlas-seven.vercel.app)**
+![Human Atlas 3D — zrzut ekranu](docs/screenshot.png)
 
-## Explore
+**Interaktywny, trójwymiarowy atlas anatomiczny człowieka — w całości po polsku.**
+2 234 klikalne struktury · 15 układów ciała · 3 432 nazwane pojęcia · PL/EN
 
-- Orbit, zoom, and select structures directly on the body.
-- Toggle individual systems or use skeleton and organ presets.
-- Move from assembled anatomy to a spaced inventory of every visible piece.
-- Search anatomical names and source identifiers.
-- Isolate a selected structure and read its details.
-- Use compact controls and detail panels on mobile.
+[![Live Demo](https://img.shields.io/badge/🌐_Demo-human--atlas--aiep.netlify.app-7C5CFF?style=for-the-badge)](https://human-atlas-aiep.netlify.app)
+[![GitHub](https://img.shields.io/badge/⭐_GitHub-aievolutionpl-1B1740?style=for-the-badge)](https://github.com/aievolutionpl)
+[![Strona](https://img.shields.io/badge/🏠_aievolutionpolska.pl-00C2D1?style=for-the-badge)](https://aievolutionpolska.pl)
 
-## Run locally
+*Build by **AI Evolution Polska***
 
-Requires Node.js 22.13 or newer. No API keys or accounts are needed.
+</div>
 
-```sh
-npm ci
-npm run dev
+---
+
+## ✨ Co to jest?
+
+**Human Atlas 3D** to darmowe, otwartoźródłowe narzędzie edukacyjne, które pozwala
+rozebrać dorosłego mężczyznę (referencyjna anatomia **BodyParts3D 4.0**) na
+**2 234 indywidualnie wybieralne siatki 3D** — bezpośrednio w przeglądarce,
+bez instalacji i bez pobierania czegokolwiek.
+
+Projekt powstał jako **fork** otwartoźródłowego Human Atlas, który
+**AI Evolution Polska** dopracowało i **w całości przetłumaczyło na język polski** —
+interfejs, opisy narządów, a nawet **nazwy struktur anatomicznych**
+(np. *Anterior tibial artery* → *tętnica piszczelowa przednia*), z zachowaniem
+poprawnej polskiej terminologii anatomicznej i odmiany przez rodzaj.
+
+> 🤖 **Vibe coding z modelami AI:** Projekt został zbudowany metodą „vibe codingu"
+> przy użyciu **GPT-6** oraz **GLM 5.3**. Cały kod jest publiczny — pobierz go,
+> zmieniaj i rozwijaj dalej.
+
+## 🎯 Co daje Human Atlas?
+
+| Funkcja | Opis |
+|---|---|
+| 🖱️ **Klikalna anatomia** | Najedź i kliknij dowolną z 2 234 struktur — od kości udowej po najmniejszą gałązkę tętnicy. Kliknięcie otwiera kartę z opisem po polsku. |
+| 🇵🇱 **Pełny polski** | Interfejs, opisy i nazwy anatomiczne po polsku (przełącznik PL/EN). 98% nazw struktur przetłumaczone z poprawną polską fleksją. |
+| 💥 **Rozsuw / składanie** | Suwak „Rozsuń anatomię" rozbiera ciało na 2 234 elementy rozmieszczone w czytelnej siatce — i składa je z powrotem. Przyciski animacji Robią to za Ciebie. |
+| 🫀 **Galeria organów** | 14 najważniejszych narządów (serce, płuca, mózg…) z polskimi nazwami i opisami. Jeden klik — kamera sama kadruje narząd na ciele. |
+| 🗺️ **Regiony ciała** | Szybkie kadrowanie: głowa, klatka piersiowa, brzuch, miednica, kończyny. |
+| 🎚️ **Panel oświetlenia** | Ekspozycja, światło główne, tylne i wypełniające + presety (Miękkie / Standard / Kontrast). Dostosuj obraz pod swój monitor. |
+| 🩻 **Efekty** | Tryb rentgenowski (szkło), etykiety struktur, poświata, autoobrót, jakość renderu. |
+| 🔍 **Wyszukiwarka** | Szukaj po nazwie polskiej lub angielskiej albo identyfikatorze atlasu (FMA). |
+| 🎲 **Losowa struktura** | Przycisk 🎲 losuje strukturę do odkrycia — świetne do nauki. Skróty: `R`, `F`, `X`, `/`. |
+| 📱 **Mobile** | Pełna obsługa dotykowa: obracanie, szczypnięcie, przyjazne panele. |
+
+## 🚀 Szybki start
+
+**Online (najprościej):** otwórz **[human-atlas-aiep.netlify.app](https://human-atlas-aiep.netlify.app)** — działa od razu.
+
+**Lokalnie:**
+
+```bash
+git clone https://github.com/aievolutionpl/human-atlas.git
+cd human-atlas
+npm install
+npm run dev        # http://localhost:3016
 ```
 
-Open http://localhost:3016. To build the static site, run `npm run build`; the output is in `dist/`.
+Wymagania: Node.js ≥ 22.13. Build produkcyjny: `npm run build` (katalog `dist/`).
 
-## Validate
+## 🛠️ Jak to działa?
 
-```sh
-npm run check
-node scripts/validate-atlas.mjs
-node scripts/validate-interactions.mjs
-npm run build
+Human Atlas to aplikacja **React + TypeScript + Three.js** (Vite), zoptymalizowana
+pod renderowanie **tysięcy struktur jednocześnie**:
+
+- **Zmergowane partie geometrii** — struktury są łączone w duże buffery GPU, więc
+  2 234 elementy rysują się bez tysięcy osobnych draw calls. Orbita i zoom pozostają
+  płynne nawet na słabszych komputerach.
+- **Tekstury stanu na GPU** — widoczność, zaznaczenie i przesunięcie każdej struktury
+  sterowane są przez per-strukturę tekstury, dzięki czemu rozsuwanie anatomii to
+  czysty shader, bez przebudowy sceny.
+- **Polski translator nomenklatury** — wbudowany słownik (~350 haseł: rzeczowniki
+  z rodzajem, przymiotniki z odmianą, frazy stałe, dopełniacze) przekłada
+  angielsko-łacińskie nazwy BodyParts3D na poprawną polszczyznę anatomiczną
+  w czasie rzeczywistym.
+- **34 MB skompresowanej geometrii** ładowane strumieniowo w 3 równoległych
+  strumieniach z paskiem postępu.
+
+Pełna atrybucja i licencja danych: [`public/ATTRIBUTION.md`](public/ATTRIBUTION.md).
+
+## 🧬 Dane anatomiczne
+
+Viewer korzysta z **BodyParts3D 4.0** (referencyjna anatomia dorosłego mężczyzny),
+licencja **CC BY 4.0** (© The Database Center for Life Science). Model nie zawiera
+każdej struktury i wariacji ludzkiego ciała; służy edukacji — **nie jest narzędziem
+diagnostycznym ani chirurgicznym**.
+
+## 💾 Użyj i rozwijaj dalej
+
+Projekt jest **całkowicie darmowy** — kod na licencji MIT, dane na CC BY 4.0.
+Możesz go klonować, modyfikować i wdrażać gdzie chcesz (Vercel, Netlify, każdy
+hosting statyczny — wystarczy katalog `dist/`).
+
+```bash
+git clone https://github.com/aievolutionpl/human-atlas.git
 ```
 
-Validation covers mesh buffers, names and concept membership, nonoverlapping exploded layouts at desktop and mobile aspect ratios, search and inspection contracts, and tap-versus-drag handling. Browser interaction checks have exercised selection, system controls, search, isolation, rotation, and 390×844, 320×568, and 844×390 layouts. Phone controls stay clear of the exploded inventory, and isolated structures fit the space above or beside the detail panel. Physical-device performance and real multitouch hardware have not been tested.
+Deploy jednym poleceniem (po `npm run build`):
 
-## Anatomy data
+```bash
+npx netlify-cli deploy --prod --dir=dist
+```
 
-The current viewer uses **BodyParts3D 4.0**, an adult male reference anatomy, licensed **CC BY 4.0**. It does not represent every human structure or variation. Individual source meshes are distinct from named concepts, which may group multiple meshes. Descriptions distinguish general system context from individual organ explanations.
+---
 
-Geometry is simplified for browser performance while retaining every source mesh. The packaged model contains 2,288,268 triangles and downloads approximately 33 MB of compressed geometry. Full credits, source links, and adaptation details are in [ATTRIBUTION.md](public/ATTRIBUTION.md).
+<div align="center">
 
-This is an educational explorer, not a diagnostic or surgical tool.
+**[AI Evolution Polska](https://aievolutionpolska.pl)** · edukacja AI po polsku
 
-## How it works
+[🌐 aievolutionpolska.pl](https://aievolutionpolska.pl) · [⭐ GitHub @aievolutionpl](https://github.com/aievolutionpl) · [🫀 Live Demo](https://human-atlas-aiep.netlify.app)
 
-Geometry is merged into batches. Per-structure GPU textures control translation, visibility, and selection, while component geometry supports accurate picking. Exploded layouts pack only the visible pieces. Rendering updates when the scene changes; orbit controls remain responsive without thousands of separate draw calls.
+*Built with vibe coding — GPT-6 & GLM 5.3*
 
-The optional WebMCP tools expose anatomy search and inspection in compatible browsers. The visible interface works without them.
-
-## Rebuilding geometry
-
-The repository includes browser-ready geometry. Rebuilding it is optional: obtain the official BodyParts3D OBJ archive and English metadata tables, prepare the joined concepts and display-system mappings, run `scripts/convert-anatomy.py`, then `node scripts/optimize-anatomy.mjs` and `node scripts/compress-models.mjs`. Simplification uses a 0.2% relative error limit per structure.
-
-## Deploy
-
-Import this repository into Vercel as a Vite project. The included `vercel.json` configures `npm ci`, `npm run build`, and the `dist` output directory. It can also be served by a static host.
-
-## License
-
-Original application code is released under the [MIT License](LICENSE). **The anatomy data has its own CC BY 4.0 license**; preserve the attribution when redistributing it. Third-party dependencies retain their respective licenses.
-
-Issues and pull requests are welcome. Please include reproduction steps and browser/device details for interaction problems.
+</div>
