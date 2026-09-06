@@ -7,7 +7,7 @@
 **Interaktywny, trójwymiarowy atlas anatomiczny człowieka — w całości po polsku.**
 2 234 klikalne struktury · 15 układów ciała · 3 432 nazwane pojęcia · PL/EN
 
-[![Live Demo](https://img.shields.io/badge/🌐_Demo-human--atlas--aiep.netlify.app-7C5CFF?style=for-the-badge)](https://human-atlas-aiep.netlify.app)
+[![Live Demo](https://img.shields.io/badge/🌐_Demo-human--atlas--ai.netlify.app-7C5CFF?style=for-the-badge)](https://human-atlas-ai.netlify.app)
 [![GitHub](https://img.shields.io/badge/⭐_GitHub-aievolutionpl-1B1740?style=for-the-badge)](https://github.com/aievolutionpl)
 [![Strona](https://img.shields.io/badge/🏠_aievolutionpolska.pl-00C2D1?style=for-the-badge)](https://aievolutionpolska.pl)
 
@@ -51,7 +51,7 @@ poprawnej polskiej terminologii anatomicznej i odmiany przez rodzaj.
 
 ## 🚀 Szybki start
 
-**Online (najprościej):** otwórz **[human-atlas-aiep.netlify.app](https://human-atlas-aiep.netlify.app)** — działa od razu.
+**Online (najprościej):** otwórz **[human-atlas-ai.netlify.app](https://human-atlas-ai.netlify.app)** — działa od razu.
 
 **Lokalnie:**
 
@@ -113,7 +113,7 @@ npx netlify-cli deploy --prod --dir=dist
 
 **[AI Evolution Polska](https://aievolutionpolska.pl)** · edukacja AI po polsku
 
-[🌐 aievolutionpolska.pl](https://aievolutionpolska.pl) · [⭐ GitHub @aievolutionpl](https://github.com/aievolutionpl) · [🫀 Live Demo](https://human-atlas-aiep.netlify.app)
+[🌐 aievolutionpolska.pl](https://aievolutionpolska.pl) · [⭐ GitHub @aievolutionpl](https://github.com/aievolutionpl) · [🫀 Live Demo](https://human-atlas-ai.netlify.app)
 
 *Built with vibe coding — GPT-6 & GLM 5.3*
 
