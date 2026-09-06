@@ -27,6 +27,7 @@ export const UI:{
  centerBody:Bi; focusSel:Bi; fxGlow:Bi;
  randomStructure:Bi; fullscreen:Bi; exitFullscreen:Bi; visitSite:Bi; footerBrand:Bi;
  lighting:Bi; exposure:Bi; lightKey:Bi; lightRim:Bi; lightAmbient:Bi; lightSoft:Bi; lightStd:Bi; lightStudio:Bi;
+ aboutBuildTitle:Bi; aboutFork:Bi; aboutAI:Bi; aboutFree:Bi; aboutGithub:Bi; aboutCreditsHeading:Bi;
 }={
   tagline:{pl:'INTERAKTYWNA ANATOMIA',en:'INTERACTIVE ANATOMY'},
   metaPieces:{pl:'zmodelowanych elementów',en:'modeled pieces'},
@@ -98,6 +99,12 @@ export const UI:{
   lighting:{pl:'Oświetlenie',en:'Lighting'},exposure:{pl:'Ekspozycja',en:'Exposure'},
   lightKey:{pl:'Światło główne',en:'Key light'},lightRim:{pl:'Światło tylne',en:'Rim light'},lightAmbient:{pl:'Wypełnienie',en:'Fill light'},
   lightSoft:{pl:'Miękkie',en:'Soft'},lightStd:{pl:'Standard',en:'Standard'},lightStudio:{pl:'Kontrast',en:'Contrast'},
+  aboutBuildTitle:{pl:'Build by AI Evolution Polska',en:'Build by AI Evolution Polska'},
+  aboutFork:{pl:'To fork otwartoźródłowego Human Atlas, dopracowany pod język polski — cały interfejs, opisy i nazwy struktur anatomicznych zostały przetłumaczone na polski.',en:'This is a fork of the open-source Human Atlas, refined for Polish — the entire interface, descriptions, and anatomical structure names have been translated.'},
+  aboutAI:{pl:'Projekt powstał metodą „vibe codingu" przy użyciu modeli AI: GPT-6 oraz GLM 5.3.',en:'Built through vibe coding with AI models: GPT-6 and GLM 5.3.'},
+  aboutFree:{pl:'Human Atlas jest całkowicie darmowy. Kod źródłowy jest dostępny na naszym GitHubie (aievolutionpl) — możesz go pobrać, zmieniać i rozwijać dalej.',en:'Human Atlas is completely free. The source code is available on our GitHub (aievolutionpl) — download it, change it, and keep building.'},
+  aboutGithub:{pl:'Pobierz z GitHuba — aievolutionpl',en:'Get it on GitHub — aievolutionpl'},
+  aboutCreditsHeading:{pl:'Źródło danych',en:'Data source'},
  };
 export function t(key: keyof typeof UI,lang:Lang):string{return UI[key][lang];}
 export function tf(key: keyof typeof UI,lang:Lang,vars:Record<string,string|number>):string{let s=UI[key][lang];for(const[k,v]of Object.entries(vars))s=s.replaceAll(`{${k}}`,String(v));return s;}

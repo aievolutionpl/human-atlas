@@ -167,3 +167,17 @@ h1 .edition{font-family:inherit;font-weight:500;font-size:10px;letter-spacing:.0
 .light-grid{display:flex;flex-direction:column;gap:8px}
 .light-row{display:grid;grid-template-columns:110px 1fr 48px;align-items:center;gap:10px;font-size:11.5px;color:#4d4470}
 .light-row output{font-variant-numeric:tabular-nums;font-size:10.5px;font-weight:600;color:#6a6191;text-align:right;background:#efedf9;border-radius:6px;padding:3px 6px}
+
+/* === Footer: brand pill centered (3-column layout) === */
+.studio-footer{gap:12px}
+.studio-footer .footer-side{flex:1;min-width:0;display:flex;align-items:center}
+.studio-footer .footer-side.footer-right{justify-content:flex-end}
+.studio-footer .brand-footer{margin-inline:auto}
+/* === About: Build by AIEP section === */
+.about-build{display:flex;gap:14px;align-items:flex-start;padding:16px;border:1px solid #7c5cff2e;border-radius:14px;background:linear-gradient(120deg,#00c2d10d 0%,#7c5cff10 55%,#e14d8a0d 100%);margin:6px 0 4px}
+.about-build img{height:52px;width:auto;flex-shrink:0}
+.about-build strong{display:block;font-size:15px;font-weight:700;color:#241f4d;margin-bottom:4px}
+.about-build p{font-size:13px!important;line-height:1.65!important;margin:7px 0!important;color:#4d4470!important}
+.github-link{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#6d4fd0!important;margin-top:8px!important;padding:9px 14px;border:1px solid #7c5cff44;border-radius:9px;background:#ffffffd9;text-decoration:none;transition:background .15s,border-color .15s}
+.github-link:hover{background:#7c5cff14;border-color:#7c5cff88}
+@media(max-width:767px){.studio-footer .footer-side{display:none}.studio-footer{justify-content:center}.studio-footer .brand-footer{margin-inline:0}.about-build{flex-direction:column;align-items:center;text-align:center}.about-build img{height:44px}}
