@@ -54,17 +54,46 @@ export default function AnatomyScene({atlas,state,lang,onSelect,onProgress,onErr
    for(const t of targets){const dx=Math.max(t.left-x,0,x-t.right),dy=Math.max(t.top-y,0,y-t.bottom),distance=Math.hypot(dx,dy);if(distance>radius)continue;const candidate=distance+Math.hypot(t.x-x,t.y-y)*.025;if(candidate<score){score=candidate;best=t.index;}}
    return best;
   };
-  const materialFor=(system:string)=>{
-   const raw=new T.Color(SYSTEMS.find(s=>s.id===system)?.color??'#8f9bc4').multiplyScalar(.78);
-   const m=new T.MeshStandardMaterial({color:raw,metalness:.05,roughness:.62,envMapIntensity:.4,side:T.DoubleSide,transparent:true,opacity:system==='integumentary'?.1:1,depthWrite:system!=='integumentary'});
+  // Per-system surface profile: bone reads as dense ivory with mottling, organs
+ // as waxy tissue, vessels as wet translucent tubes, nerves as soft glossy cords.
+ const PROFILE:Record<string,{color:string;tint?:string;tintAmount?:number;rough:number;metal:number;mottle:number;rim:[number,number,number];rimK:number;spec:number}>={
+  skeletal:{color:'#efe7d6',tint:'#7c5cff',tintAmount:.1,rough:.5,metal:.02,mottle:.3,rim:[1,.94,.82],rimK:.5,spec:.6},
+  connective:{color:'#e9e2d4',rough:.58,metal:.02,mottle:.28,rim:[1,.95,.85],rimK:.42,spec:.5},
+  sensory:{color:'#e6dcc8',rough:.5,metal:.04,mottle:.22,rim:[1,.95,.88],rimK:.45,spec:.7},
+  integumentary:{color:'#d8b49a',rough:.72,metal:0,mottle:.18,rim:[1,.8,.72],rimK:.3,spec:.35},
+  muscular:{color:'#c2415f',rough:.6,metal:.03,mottle:.35,rim:[1,.42,.55],rimK:.55,spec:.5},
+  cardiac:{color:'#c3324f',rough:.45,metal:.05,mottle:.3,rim:[1,.35,.5],rimK:.6,spec:.8},
+  arterial:{color:'#c8442a',rough:.34,metal:.05,mottle:.16,rim:[1,.5,.4],rimK:.6,spec:.9},
+  venous:{color:'#2b6f78',rough:.38,metal:.05,mottle:.16,rim:[.5,.9,1],rimK:.5,spec:.85},
+  lymphatic:{color:'#7fa8c9',rough:.4,metal:.04,mottle:.14,rim:[.75,.9,1],rimK:.45,spec:.8},
+  nervous:{color:'#d8a13a',rough:.44,metal:.03,mottle:.2,rim:[1,.85,.55],rimK:.5,spec:.75},
+  respiratory:{color:'#c98a9a',rough:.52,metal:.03,mottle:.26,rim:[1,.8,.85],rimK:.5,spec:.6},
+  digestive:{color:'#b8763f',rough:.48,metal:.04,mottle:.3,rim:[1,.78,.55],rimK:.5,spec:.7},
+  urinary:{color:'#b08a5a',rough:.46,metal:.04,mottle:.24,rim:[1,.85,.6],rimK:.45,spec:.7},
+  reproductive:{color:'#c07d86',rough:.5,metal:.03,mottle:.22,rim:[1,.75,.8],rimK:.45,spec:.65},
+  endocrine:{color:'#a58fb5',rough:.5,metal:.04,mottle:.24,rim:[.85,.8,1],rimK:.45,spec:.7},
+ };
+ const GLSL_NOISE=`
+ float ah(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,37.719)))*43758.5453);}
+ float an(vec3 p){vec3 i=floor(p),f=fract(p);f=f*f*(3.0-2.0*f);
+  return mix(mix(mix(ah(i),ah(i+vec3(1,0,0)),f.x),mix(ah(i+vec3(0,1,0)),ah(i+vec3(1,1,0)),f.x),f.y),
+             mix(mix(ah(i+vec3(0,0,1)),ah(i+vec3(1,0,1)),f.x),mix(ah(i+vec3(0,1,1)),ah(i+vec3(1,1,1)),f.x),f.y),f.z);}`;
+ const materialFor=(system:string)=>{
+   const p=PROFILE[system]??{color:SYSTEMS.find(s=>s.id===system)?.color??'#8f9bc4',tint:SYSTEMS.find(s=>s.id===system)?.color,tintAmount:0,rough:.55,metal:.04,mottle:.22,rim:[1,.9,.85] as [number,number,number],rimK:.45,spec:.6};
+   const raw=new T.Color(p.color);
+   if(p.tint&&p.tintAmount)raw.lerp(new T.Color(p.tint),p.tintAmount);
+   const m=new T.MeshStandardMaterial({color:raw,metalness:p.metal,roughness:p.rough,envMapIntensity:.55,side:T.DoubleSide,transparent:true,opacity:system==='integumentary'?.1:1,depthWrite:system!=='integumentary'});
    (m as unknown as {userData:{baseOpacity:number}}).userData={baseOpacity:m.opacity};
    m.onBeforeCompile=shader=>{
     shader.uniforms.partState={value:partTexture};shader.uniforms.selectionState={value:selectionTexture};shader.uniforms.stateWidth={value:width};
-    shader.vertexShader='attribute float partIndex; uniform sampler2D partState; uniform sampler2D selectionState; uniform float stateWidth; varying float partVisible; varying float partSelected;\n'+shader.vertexShader;
-    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvec2 stateUv = vec2((partIndex + 0.5) / stateWidth, 0.5); vec4 state = texture2D(partState, stateUv); transformed += state.xyz; partVisible = state.w; partSelected = texture2D(selectionState, stateUv).r;');
-    shader.fragmentShader='varying float partVisible; varying float partSelected;\n'+shader.fragmentShader;
+    shader.vertexShader='attribute float partIndex; uniform sampler2D partState; uniform sampler2D selectionState; uniform float stateWidth; varying float partVisible; varying float partSelected; varying vec3 vWPos;\n'+shader.vertexShader;
+    shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nvWPos = (modelMatrix * vec4(transformed, 1.0)).xyz;\nvec2 stateUv = vec2((partIndex + 0.5) / stateWidth, 0.5); vec4 state = texture2D(partState, stateUv); transformed += state.xyz; partVisible = state.w; partSelected = texture2D(selectionState, stateUv).r;');
+    shader.uniforms.mottleK={value:p.mottle};shader.uniforms.rimColor={value:new T.Vector3(...p.rim)};shader.uniforms.rimK={value:p.rimK};
+    shader.fragmentShader='varying float partVisible; varying float partSelected; varying vec3 vWPos; uniform float mottleK; uniform vec3 rimColor; uniform float rimK;\n'+GLSL_NOISE+'\n'+shader.fragmentShader;
     shader.fragmentShader=shader.fragmentShader.replace('#include <clipping_planes_fragment>','#include <clipping_planes_fragment>\nif (partVisible < 0.5) discard;');
-    shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.36, 0.10, 0.78), partSelected * 0.78);');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <color_fragment>','#include <color_fragment>\ndiffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.36, 0.10, 0.78), partSelected * 0.78);\nfloat n1 = an(vWPos * 42.0); float n2 = an(vWPos * 165.0 + 11.3); float grain = (n1 - 0.5) * 0.7 + (n2 - 0.5) * 0.3;\ndiffuseColor.rgb *= 1.0 + grain * mottleK;\nfloat cavity = smoothstep(0.0, 1.0, 0.5 + grain * 0.9); diffuseColor.rgb *= mix(0.62, 1.06, cavity);');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <roughnessmap_fragment>','#include <roughnessmap_fragment>\nroughnessFactor = clamp(roughnessFactor + (n2 - 0.5) * 0.24 * mottleK, 0.04, 1.0);');
+    shader.fragmentShader=shader.fragmentShader.replace('#include <opaque_fragment>','vec3 anatViewDir = normalize(vViewPosition); float anatFres = pow(1.0 - clamp(dot(normal, anatViewDir), 0.0, 1.0), 2.4); outgoingLight += rimColor * anatFres * rimK;\n#include <opaque_fragment>');
    };materials.push(m);return m;
   };
   const mats=new Map(SYSTEMS.map(s=>[s.id,materialFor(s.id)]));
